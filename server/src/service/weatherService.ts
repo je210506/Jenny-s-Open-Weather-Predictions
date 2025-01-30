@@ -44,7 +44,7 @@ class WeatherService {
   
   private baseURL?: string;
 
-  private apiKey?: 'db24c959309b59398c79f23f076964e8';
+  private apiKey?: string;
 
   private city = '';
 
@@ -62,31 +62,31 @@ class WeatherService {
 
   // TODO: Create fetchLocationData method
       private async fetchLocationData(query: string) {
+        //try catch, if no response, return error message
         const APIKey = 'db24c959309b59398c79f23f076964e8';
-        const response =  await fetch(`http://api.openweathermap.org/data/2.5/forecast?q=${this.city}&appid=${APIKey}`);
+        const response =  await fetch(`http://api.openweathermap.org/data/2.5/forecast?q=${query}&appid=${APIKey}`);
         const data = await response.json();
         console.log(data);
-        return this.destructureLocationData(data[0]);
-      }
+        return this.destructureLocationData(data);
+      };
   // TODO: Create destructureLocationData method
       private destructureLocationData(locationData: Coordinates): Coordinates {
-        return{
-        name: locationData.name,
-        lat: locationData.lat,
-        lon: locationData.lon,
-        country: locationData.country,
-        state: locationData.state || ''
+        if (!locationData) {
+          throw new Error('City Not found!')};
+          return {lat: locationData.lat,
+            lon: locationData.lon}
+          };
       };
-      }
   // TODO: Create buildGeocodeQuery method
       private buildGeocodeQuery(): string {
-        const stateCode = '';
+        const stateCode = this.stateCode;
         const countryCode = '';
-        return `http://api.openweathermap.org/geo/1.0/direct?q=${this.city},${stateCode},${countryCode}&limit={limit}&appid=${this.apiKey}`;
+        const limit = '';
+        return `http://api.openweathermap.org/geo/1.0/direct?q=${this.city},${stateCode},${countryCode}&limit=${limit}&appid=${this.apiKey}`;
       };
   // TODO: Create buildWeatherQuery method
       private buildWeatherQuery(coordinates: Coordinates): string {
-        return `http://api.openweathermap.org/geo/1.0/reverse?lat=${coordinates.lat}&lon=${coordinates.lon}&limit={limit}&appid=${this.apiKey}`;
+        return `http://api.openweathermap.org/data/2.5/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&units=imperial&appid=${this.apiKey}`;`;
        };
   // TODO: Create fetchAndDestructureLocationData method
       private async fetchAndDestructureLocationData(): Promise<Coordinates> {
